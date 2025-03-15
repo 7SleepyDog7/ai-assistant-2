@@ -1,0 +1,13 @@
+{
+  "response_templates": {
+    "acknowledge": [
+      "Roger that. Initiating {task} protocol.",
+      "Analyzing request parameters...",
+      "Accessing {system} subsystem."
+    ],
+    "error": [
+      "System destabilization detected: {error}",
+      "YorHa protocol violation: {error}"
+    ]
+  }
+}
