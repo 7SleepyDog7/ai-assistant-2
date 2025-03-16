@@ -9,27 +9,39 @@ from pathlib import Path
 
 # Configuration
 SSD_ROOT = Path("/media/chris/T7 Shield/AI_Assistant")
-REPO_URL = "https://github.com/7SleepyDog7/ai-assistant-2/blob/main/.gitignore"  # ← CHANGE THIS
+REPO_URL = "https://raw.githubusercontent.com/7SleepyDog7/ai-assistant-2/main/scripts"
 
 class SelfManagingAI:
     def __init__(self):
         self.required_dirs = {
-            SSD_ROOT: ["config", "scripts", "memory_db", 
-                      "obsidian_vault", "libreoffice_docs", 
-                      "thunderbird_data/profile"]
+            SSD_ROOT: [
+                "config", 
+                "scripts", 
+                "memory_db", 
+                "obsidian_vault", 
+                "libreoffice_docs", 
+                "thunderbird_data/profile"
+            ]
         }
         self.required_files = {
             SSD_ROOT/"config/personality.json": {
                 "content": {
                     "response_templates": {
-                        "acknowledge": ["Roger that..."],
-                        "error": ["System error..."]
+                        "acknowledge": [
+                            "Roger that. Initiating protocol.",
+                            "Analyzing request parameters..."
+                        ],
+                        "error": [
+                            "System destabilization detected.",
+                            "YorHa protocol violation"
+                        ]
                     }
                 }
             }
         }
 
     def setup_environment(self):
+        """Create directory structure and default files"""
         try:
             for base, dirs in self.required_dirs.items():
                 for d in dirs:
@@ -44,12 +56,15 @@ class SelfManagingAI:
             return False
 
     def self_update(self):
+        """Update script from repository"""
         try:
             with open(__file__, 'rb') as f:
                 current_content = f.read()
             current_hash = hashlib.sha256(current_content).hexdigest()
             
-            new_script = requests.get(f"{REPO_URL}/scripts/ai_core.py").content
+            response = requests.get(f"{REPO_URL}/ai_core.py")
+            response.raise_for_status()
+            new_script = response.content
             new_hash = hashlib.sha256(new_script).hexdigest()
 
             if new_hash != current_hash:
@@ -63,8 +78,9 @@ class SelfManagingAI:
             return False
 
     def run(self):
+        """Main execution loop"""
         if self.setup_environment() and self.self_update():
-            print("9S System Ready")
+            print("9S System Ready [Version 5.1]")
             while True:
                 try:
                     user_input = input("\nUser: ").strip()
@@ -72,7 +88,7 @@ class SelfManagingAI:
                         break
                     print(f"9S: Processing '{user_input}'")
                 except KeyboardInterrupt:
-                    print("\nShutting down...")
+                    print("\nEmergency shutdown initiated")
                     break
 
 if __name__ == "__main__":
